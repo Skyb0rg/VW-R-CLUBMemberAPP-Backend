@@ -1,0 +1,52 @@
+#Download
+curl -sS https://getcomposer.org/installer | php
+
+cd /var/www/vhosts/vw-r-club.de/httpdocs/vw-r-club-member-app
+
+# create File : composer.json
+
+{
+  "require" : {
+    "parse/php-sdk" : "~1.1.*"
+  }
+}
+
+#Install Parse
+php composer.phar install
+
+
+#vw-r-club.de/vw-r-club-member-app/memberapp-refresh.php
+<?php
+
+require 'vendor/autoload.php';
+ 
+use Parse\ParseClient;
+ 
+ParseClient::initialize('rG0fHSY1NGztjMC3k6DJgsOR6FSjGiawXO9ss2kb', 'rd9Z65vMXxT8bhOqcS9UUGWizzaJvymuG2U7KN9e', 'biJ8p7ZfQoE7QVNyeqkini8ZXH4mP6QTFoUgx9AU');
+
+use Parse\ParseObject;
+ 
+$testObject = ParseObject::create("TestObject");
+$testObject->set("foo", "bar");
+$testObject->save();
+
+?>
+
+test --> error. but DB-Entry
+
+#/etc/php.ini
+[Date]
+; Defines the default timezone used by the date functions
+; http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone
+date.timezone =Europe/Berlin
+
+; http://www.php.net/manual/en/datetime.configuration.php#ini.date.default-latitude
+date.default_latitude = 51.248532
+
+; http://www.php.net/manual/en/datetime.configuration.php#ini.date.default-longitude
+date.default_longitude = 6.704677
+
+
+--> fixed error
+
+

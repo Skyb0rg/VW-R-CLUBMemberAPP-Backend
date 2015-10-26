@@ -1,0 +1,121 @@
+select name, chatid, dateline, ctext, warningtype from vb3_mgc_cb_evo_chat WHERE warningtype IS NULL OR warningtype = '' ORDER BY chatid DESC;
+
+select name, chatid, dateline, ctext, warningtype from vb3_mgc_cb_evo_chat ORDER BY chatid DESC;
+
+SELECT strip_tags(message) FROM notes ORDER BY message desc" 
+
+select name, chatid, dateline, ctext, warningtype from vb3_mgc_cb_evo_chat WHERE warningtype IS NULL OR warningtype = '' ORDER BY chatid DESC;
+select name, chatid, dateline, strip_tags(ctext), warningtype from vb3_mgc_cb_evo_chat WHERE warningtype IS NULL OR warningtype = '' ORDER BY chatid DESC;
+udf_StripHTML
+
+####Sauberer Chattext#####
+select name, chatid, dateline, udf_StripHTML(ctext), warningtype from vb3_mgc_cb_evo_chat WHERE warningtype IS NULL OR warningtype = '' ORDER BY chatid DESC;
+#####
+--------------------------
+#############FUNKTION ###########################
+
+ mysql -uadmin -p
+ use vw-r-club_db1
+ 
+DROP FUNCTION IF EXISTS `udf_StripHTML`;
+delimiter ||
+CREATE FUNCTION `udf_StripHTML`(_HTMLText VARCHAR(8000)) 
+RETURNS varchar(8000) DETERMINISTIC
+BEGIN
+      set @HTMLText=_HTMLText;
+      
+      while locate('<',@HTMLText)>0 do 
+            set 
+                  @pos_lt=locate('<',@HTMLText),
+                  @len=locate('>',@HTMLText,@pos_lt)-@pos_lt+1;
+            set 
+                  @HTMLText=replace(@HTMLText,substring(@HTMLText,@pos_lt,@len),'');
+      end while;
+	  
+	  while locate('[',@HTMLText)>0 do 
+            set 
+                  @pos_lt=locate('[',@HTMLText),
+                  @len=locate(']',@HTMLText,@pos_lt)-@pos_lt+1;
+            set 
+                  @HTMLText=replace(@HTMLText,substring(@HTMLText,@pos_lt,@len),'');
+      end while;
+      
+      RETURN @HTMLText;
+END; 
+||
+delimiter ;
+
+
+
+
+
+#####################Funktionen anzeigen##################################
+
+SHOW FUNCTION STATUS;
+
+#######################
+
+SET GLOBAL log_bin_trust_function_creators=1;
+DROP FUNCTION IF EXISTS strip_tags;
+DELIMITER |
+CREATE FUNCTION strip_tags( Dirty varchar(4000) )
+RETURNS varchar(4000)
+DETERMINISTIC 
+BEGIN
+  DECLARE iStart, iEnd, iLength int;
+    WHILE Locate( '<', Dirty ) > 0 And Locate( '>', Dirty, Locate( '<', Dirty )) > 0 DO
+      BEGIN
+        SET iStart = Locate( '<', Dirty ), iEnd = Locate( '>', Dirty, Locate('<', Dirty ));
+        SET iLength = ( iEnd - iStart) + 1;
+        IF iLength > 0 THEN
+          BEGIN
+            SET Dirty = Insert( Dirty, iStart, iLength, '');
+          END;
+        END IF;
+      END;
+    END WHILE;
+    RETURN Dirty;
+END;
+|
+DELIMITER ;
+
+SELECT strip_tags(message) FROM notes ORDER BY message desc" 
+
+delimiter ||
+DROP FUNCTION IF EXISTS strip_tags||
+CREATE FUNCTION strip_tags( x LONGTEXT) RETURNS LONGTEXT
+LANGUAGE SQL NOT DETERMINISTIC READS SQL DATA
+BEGIN
+DECLARE sstart INT UNSIGNED;
+DECLARE ends INT UNSIGNED;
+SET sstart = LOCATE('<', x, 1);
+REPEAT
+SET ends = LOCATE('>', x, sstart);
+SET x = CONCAT(SUBSTRING( x, 1 ,sstart -1) ,SUBSTRING(x, ends +1 )) ;
+SET sstart = LOCATE('<', x, 1);
+UNTIL sstart < 1 END REPEAT;
+return x;
+END;
+||
+delimiter ;
+
+
+
+
+delimiter //
+DROP FUNCTION IF EXISTS strip_tags//
+CREATE FUNCTION strip_tags( x longtext) RETURNS longtext
+LANGUAGE SQL NOT DETERMINISTIC READS SQL DATA
+BEGIN
+DECLARE sstart INT UNSIGNED;
+DECLARE ends INT UNSIGNED;
+SET sstart = LOCATE('<', x, 1);
+REPEAT
+SET ends = LOCATE('>', x, sstart);
+SET x = CONCAT(SUBSTRING( x, 1 ,sstart -1) ,SUBSTRING(x, ends +1 )) ;
+SET sstart = LOCATE('<', x, 1);
+UNTIL sstart < 1 END REPEAT;
+return x;
+END;
+//
+delimiter ;
