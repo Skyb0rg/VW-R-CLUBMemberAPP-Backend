@@ -43,6 +43,7 @@ for ($i = 0; $i < count($results); $i++) {
 	//delete toForum-Field
 	$toForumdelete = $query->get($object->getObjectId());
 	$toForumdelete->delete("toForum");
+	$toForumdelete->set("acceptedByForum", true);
 	$toForumdelete->save();
 
 }
