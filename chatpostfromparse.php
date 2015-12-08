@@ -9,30 +9,21 @@ use Parse\ParseUser;
 
 ParseClient::initialize($Parse1, $Parse2, $Parse3);
 
-//UserList pre-read
-$queryUserList = ParseUser::query();
-$resultsuserList = $queryUserList->find();
-
 $myfile = fopen("chatfromparse.txt", "w");
 $txt = date . " war jetzt \n";
 fwrite($myfile, $txt);
 
 $query = new ParseQuery("ChatMsgs");
 $query->equalTo("toForum", true);
+$query->includeKey("Benutzer");
+$query->ascending("createdAt");
 $results = $query->find();
 for ($i = 0; $i < count($results); $i++) {
   $object = $results[$i];
-  //User compare
-        $chatusername = $object->get("Benutzer");
-                        for ($j = 0; $j < count($resultsuserList); $j++) {
-           $objectUserList = $resultsuserList[$j];
-            if($chatusername->getObjectId() == $objectUserList->getObjectId()) {
-                                $objectFindUserList = $objectUserList;
-            }else echo "";
-        }
 
 	$ctextdirect = $object->get('content');
-        $name = $objectFindUserList->get('fullname');
+	$objectFindUserList = $object->get("Benutzer");
+    $name = $objectFindUserList->get('fullname');
 	$txt = $ctextdirect ."\n".$name."\n";
 	fwrite($myfile, $txt);
 	
