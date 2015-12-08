@@ -9,9 +9,13 @@ use Parse\ParseUser;
 
 ParseClient::initialize($Parse1, $Parse2, $Parse3);
 
-        //UserList pre-read
-    $queryUserList = ParseUser::query();
-    $resultsuserList = $queryUserList->find();
+//UserList pre-read
+$queryUserList = ParseUser::query();
+$resultsuserList = $queryUserList->find();
+
+$myfile = fopen("chatfromparse.txt", "w");
+$txt = date . " war jetzt \n";
+fwrite($myfile, $txt);
 
 $query = new ParseQuery("ChatMsgs");
 $query->equalTo("toForum", true);
@@ -28,11 +32,9 @@ for ($i = 0; $i < count($results); $i++) {
         }
 
 	$ctextdirect = $object->get('content');
-        $name = $objectFindUserList->get('username');
-	$myfile = fopen("chatfromparse.txt", "w");
+        $name = $objectFindUserList->get('fullname');
 	$txt = $ctextdirect ."\n".$name."\n";
 	fwrite($myfile, $txt);
-	fclose($myfile);
 	
 	$ctextdirect = $vbulletin->db->escape_string($ctextdirect);
 	$name = $vbulletin->db->escape_string($name);
@@ -47,5 +49,6 @@ for ($i = 0; $i < count($results); $i++) {
 	$toForumdelete->save();
 
 }
+fclose($myfile);
 ?>
 
