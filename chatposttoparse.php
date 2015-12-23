@@ -7,6 +7,7 @@ use Parse\ParseClient;
 use Parse\ParseObject;
 use Parse\ParseQuery;
 use Parse\ParseUser;
+use Parse\ParseCloud;
 
 ParseClient::initialize($Parse1, $Parse2, $Parse3);
 
@@ -31,14 +32,21 @@ fclose($myfile);
 		$ChatMsg = new ParseObject("ChatMsgs");
 		$ChatMsg->set("content", $cleanhtmltext);
 		$ChatMsg->set("Benutzer", ParseUser::getCurrentUser());
-                $ChatMsg->set("rclubchatbenutzer",$puser);
+		$ChatMsg->set("groupId", "9GXWx7cWHh");
+        $ChatMsg->set("rclubchatbenutzer",$puser);
 		try {
 		  $ChatMsg->save();
 		}catch (Exception $e) {
 		  //echo 'Exception : ',  $e->getMessage(), "\n";
 		}
+		
 	} catch (ParseException $error) {
  
+	}
+	try {
+		  ParseCloud::run('sendfromForumPushToApp', ['user' => $puser,'message' => $cleanhtmltext]);
+	}catch (Exception $e) {
+		  //echo 'Exception : ',  $e->getMessage(), "\n";
 	}
 
 ?>
